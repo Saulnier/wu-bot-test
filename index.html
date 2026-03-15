@@ -382,10 +382,9 @@
     .info-list li {
       font-size: 13px;
       color: var(--wu-black);
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      line-height: 1.5;
+      line-height: 1.6;
+      padding-left: 16px;
+      position: relative;
     }
 
     .info-list li::before {
@@ -393,8 +392,9 @@
       color: var(--accent-gold);
       font-size: 12px;
       font-weight: 600;
-      margin-top: 1px;
-      flex-shrink: 0;
+      position: absolute;
+      left: 0;
+      top: 2px;
     }
 
     /* Status card */
@@ -491,6 +491,82 @@
       .sidebar { order: -1; }
       footer { flex-direction: column; gap: 8px; padding: 20px 24px; text-align: center; }
     }
+
+    /* ── Pulse Overlay ── */
+    .chat-nudge {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      width: 80px;
+      height: 80px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      animation: nudgeFadeIn 0.5s ease 1.5s forwards;
+    }
+
+    .chat-nudge.hidden { display: none; }
+
+    @keyframes nudgeFadeIn {
+      to { opacity: 1; }
+    }
+
+    .pulse-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid var(--wu-yellow);
+      animation: pulseRing 1.6s ease-out 1.5s infinite;
+    }
+
+    .pulse-ring:nth-child(2) {
+      animation-delay: 2.3s;
+      border-color: rgba(255, 221, 0, 0.5);
+    }
+
+    @keyframes pulseRing {
+      0%   { transform: scale(0.85); opacity: 1; }
+      100% { transform: scale(2.2);  opacity: 0; }
+    }
+
+    .chat-nudge-label {
+      position: fixed;
+      bottom: 96px;
+      right: 10px;
+      background: var(--wu-dark);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 13px;
+      border-radius: 8px;
+      border: 1px solid var(--wu-yellow);
+      white-space: nowrap;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(6px);
+      animation: nudgeLabelIn 0.5s ease 2s forwards;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .chat-nudge-label::after {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      right: 28px;
+      width: 12px;
+      height: 12px;
+      background: var(--wu-dark);
+      border-right: 1px solid var(--wu-yellow);
+      border-bottom: 1px solid var(--wu-yellow);
+      transform: rotate(45deg);
+    }
+
+    @keyframes nudgeLabelIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -550,6 +626,7 @@
     <div class="info-card">
       <h3>Testing Tips</h3>
       <ul class="info-list">
+        <li>Open the chat widget by clicking the <strong>button in the bottom-right corner</strong> of this page to begin testing</li>
         <li>Click <strong>Copy</strong> on any prompt and paste it into the chat widget</li>
         <li>Use error codes (e.g. C1052) to test specific error handling flows</li>
         <li>Test escalation paths with phrases like "speak to an agent"</li>
@@ -563,11 +640,7 @@
   </div>
 </div>
 
-<!-- Footer -->
-<footer>
-  <p>© Western Union Holdings, Inc. — Internal QA Use Only</p>
-  <span>Powered by Genesys Cloud CX Web Messaging</span>
-</footer>
+
 
 <!-- Genesys Script -->
 <script type="text/javascript" charset="utf-8">
@@ -718,6 +791,27 @@
   }
 
   renderPrompts();
+</script>
+<!-- Pulse overlay pointing to Genesys chat button -->
+<div class="chat-nudge" id="chatNudge">
+  <div class="pulse-ring"></div>
+  <div class="pulse-ring"></div>
+</div>
+<div class="chat-nudge-label" id="chatNudgeLabel" onclick="dismissNudge()">
+  💬 Click here to start testing
+</div>
+
+<script>
+  function dismissNudge() {
+    document.getElementById('chatNudge').classList.add('hidden');
+    const label = document.getElementById('chatNudgeLabel');
+    label.style.transition = 'opacity 0.3s';
+    label.style.opacity = '0';
+    setTimeout(() => label.style.display = 'none', 300);
+  }
+
+  // Auto-dismiss after 8 seconds
+  setTimeout(dismissNudge, 8000);
 </script>
 </body>
 </html>
