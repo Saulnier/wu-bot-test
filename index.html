@@ -3,53 +3,721 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Client Bot Test</title>
+  <title>Genesys & Western Union Bot Test Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --wu-yellow: #FFDD00;
+      --wu-black: #1A1A1A;
+      --wu-dark: #111111;
+      --wu-gray: #F5F5F0;
+      --wu-mid-gray: #E8E8E2;
+      --wu-text-muted: #6B6B6B;
+      --wu-border: #D8D8D0;
+      --accent-gold: #C9A84C;
+      --white: #FFFFFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      max-width: 900px;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--wu-gray);
+      color: var(--wu-black);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--wu-dark);
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      border-bottom: 3px solid var(--wu-yellow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .wu-logo-badge {
+      background: var(--wu-yellow);
+      color: var(--wu-dark);
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 7px 14px;
+      letter-spacing: 0.04em;
+      border-radius: 2px;
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 28px;
+      background: #444;
+    }
+
+    .genesys-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #999;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .header-tag {
+      background: rgba(255,221,0,0.15);
+      border: 1px solid rgba(255,221,0,0.4);
+      color: var(--wu-yellow);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--wu-dark);
+      color: var(--white);
+      padding: 64px 48px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(255,221,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--wu-yellow), transparent 60%);
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--wu-yellow);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 640px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 span {
+      color: var(--wu-yellow);
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: #AAAAAA;
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 32px;
+      margin-top: 36px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .meta-value {
+      font-size: 13px;
+      color: #CCC;
+      font-weight: 400;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── Main layout ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 48px 80px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── Prompts Panel ── */
+    .prompts-panel {
+      background: var(--white);
+      border: 1px solid var(--wu-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+    }
+
+    .panel-header {
+      background: var(--wu-dark);
+      color: var(--white);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .prompt-count {
+      background: var(--wu-yellow);
+      color: var(--wu-dark);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+
+    /* Search */
+    .search-bar {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--wu-mid-gray);
+      background: var(--wu-gray);
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px 16px 10px 38px;
+      border: 1px solid var(--wu-border);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 12px center;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--accent-gold);
+    }
+
+    /* Category tabs */
+    .category-tabs {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--wu-mid-gray);
+      padding: 0 24px;
+      gap: 0;
+      scrollbar-width: none;
+    }
+
+    .category-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--wu-text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    .tab-btn:hover { color: var(--wu-black); }
+
+    .tab-btn.active {
+      color: var(--wu-dark);
+      border-bottom-color: var(--wu-yellow);
+      font-weight: 600;
+    }
+
+    /* Prompt list */
+    .prompt-list {
+      max-height: 560px;
+      overflow-y: auto;
+      padding: 12px 0;
+    }
+
+    .prompt-list::-webkit-scrollbar { width: 4px; }
+    .prompt-list::-webkit-scrollbar-track { background: transparent; }
+    .prompt-list::-webkit-scrollbar-thumb { background: var(--wu-border); border-radius: 2px; }
+
+    .prompt-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      cursor: pointer;
+      transition: background 0.12s;
+      gap: 12px;
+    }
+
+    .prompt-item:hover { background: var(--wu-gray); }
+
+    .prompt-text {
+      font-size: 13.5px;
+      color: var(--wu-black);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .prompt-item:hover .prompt-text { color: #000; }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--wu-border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--wu-text-muted);
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.15s;
+      white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .prompt-item:hover .copy-btn { opacity: 1; }
+
+    .copy-btn:hover {
+      background: var(--wu-yellow);
+      border-color: var(--wu-yellow);
+      color: var(--wu-dark);
+    }
+
+    .copy-btn.copied {
+      opacity: 1;
+      background: #e8f5e9;
+      border-color: #4caf50;
+      color: #2e7d32;
+    }
+
+    /* No results */
+    .no-results {
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--wu-text-muted);
+      font-size: 13px;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--white);
+      border: 1px solid var(--wu-border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+    }
+
+    .info-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--wu-yellow);
+      display: inline-block;
+    }
+
+    .info-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-list li {
+      font-size: 13px;
+      color: var(--wu-black);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
       line-height: 1.5;
     }
-    h1 {
-      margin-bottom: 10px;
+
+    .info-list li::before {
+      content: '→';
+      color: var(--accent-gold);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 1px;
+      flex-shrink: 0;
     }
-    .box {
-      background: #f6f8fa;
-      border: 1px solid #d0d7de;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 20px;
+
+    /* Status card */
+    .status-card {
+      background: var(--wu-dark);
+      border-radius: 12px;
+      padding: 24px;
+      color: var(--white);
+    }
+
+    .status-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      margin-bottom: 18px;
+      color: var(--wu-yellow);
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #2A2A2A;
+      font-size: 13px;
+    }
+
+    .status-row:last-child { border-bottom: none; }
+
+    .status-label { color: #888; font-size: 12px; }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4CAF50;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-active {
+      color: #4CAF50;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .monospace { font-family: 'Courier New', monospace; color: #CCC; font-size: 12px; }
+
+    /* Error codes section */
+    .error-tag {
+      display: inline-block;
+      background: #FFF3CD;
+      border: 1px solid #FFEAA7;
+      color: #856404;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-right: 6px;
+      font-family: 'Courier New', monospace;
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--wu-dark);
+      border-top: 1px solid #222;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: #555;
+    }
+
+    footer span {
+      font-size: 12px;
+      color: #444;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      header { padding: 0 24px; }
+      .hero { padding: 48px 24px 40px; }
+      .main { grid-template-columns: 1fr; padding: 32px 24px; }
+      .sidebar { order: -1; }
+      footer { flex-direction: column; gap: 8px; padding: 20px 24px; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to the Bot Test Page</h1>
-  <p>This page is for testing the Genesys web messaging bot experience.</p>
 
-  <div class="box">
-    <strong>Suggested test prompts</strong>
-    <ul>
-      <li>How can you help me?</li>
-      <li>I need support with my account</li>
-      <li>Can you connect me to an agent?</li>
-    </ul>
+<!-- Header -->
+<header>
+  <div class="logo-area">
+    <div class="wu-logo-badge">Western Union</div>
+    <div class="divider-v"></div>
+    <span class="genesys-label">Genesys Cloud CX</span>
+  </div>
+  <div class="header-tag">⬤&nbsp; Test Environment</div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="eyebrow-row">
+    <p class="hero-eyebrow">Bot Testing Interface</p>
+  </div>
+  <h1>Genesys &amp; <span>Western Union</span><br>Bot Test Page</h1>
+  <p>Use the prompts below to test the Genesys Web Messaging bot experience. Copy any prompt and paste it directly into the chat widget to validate bot responses.</p>
+
+</div>
+
+<!-- Main -->
+<div class="main">
+  <!-- Prompts Panel -->
+  <div class="prompts-panel">
+    <div class="panel-header">
+      <h2>Suggested Test Prompts</h2>
+      <span class="prompt-count" id="visible-count">0</span>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search prompts…" oninput="filterPrompts()" />
+    </div>
+    <div class="category-tabs" id="category-tabs"></div>
+    <div class="prompt-list" id="prompt-list"></div>
   </div>
 
-  <script type="text/javascript" charset="utf-8">
-  (function (g, e, n, es, ys) {
-    g['_genesysJs'] = e;
-    g[e] = g[e] || function () {
-      (g[e].q = g[e].q || []).push(arguments)
-    };
-    g[e].t = 1 * new Date();
-    g[e].c = es;
-    ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
-  })(window, 'Genesys', 'https://apps.mypurecloud.com/genesys-bootstrap/genesys.min.js', {
-    environment: 'prod',
-    deploymentId: '77ce3acc-e35d-48b0-a3c0-25ab5cbc1b27'
-  });
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <!-- Bot Status -->
+    <div class="status-card">
+      <h3>Bot Status</h3>
+      <div class="status-row">
+        <span class="status-label">Widget</span>
+        <span class="status-active"><span class="status-dot"></span>Live</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Platform</span>
+        <span class="monospace">Genesys Cloud CX</span>
+      </div>
+    </div>
+
+    <!-- Testing Tips -->
+    <div class="info-card">
+      <h3>Testing Tips</h3>
+      <ul class="info-list">
+        <li>Click <strong>Copy</strong> on any prompt and paste it into the chat widget</li>
+        <li>Use error codes (e.g. C1052) to test specific error handling flows</li>
+        <li>Test escalation paths with phrases like "speak to an agent"</li>
+        <li>Try variations of prompts to check NLU coverage</li>
+        <li>Use the search bar to quickly find prompts by topic</li>
+      </ul>
+    </div>
+
+
+
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>© Western Union Holdings, Inc. — Internal QA Use Only</p>
+  <span>Powered by Genesys Cloud CX Web Messaging</span>
+</footer>
+
+<!-- Genesys Script -->
+<script type="text/javascript" charset="utf-8">
+(function (g, e, n, es, ys) {
+  g['_genesysJs'] = e;
+  g[e] = g[e] || function () {
+    (g[e].q = g[e].q || []).push(arguments)
+  };
+  g[e].t = 1 * new Date();
+  g[e].c = es;
+  ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+})(window, 'Genesys', 'https://apps.mypurecloud.com/genesys-bootstrap/genesys.min.js', {
+  environment: 'prod',
+  deploymentId: '77ce3acc-e35d-48b0-a3c0-25ab5cbc1b27'
+});
 </script>
 
+<script>
+  const categories = {
+    "All": null,
+    "Account": ["About Us","Create and register a Western Union profile","Add a receiver in my online profile","Add a receiver to my profile","Add or delete a credit/debit card or bank account","Delete a receiver from my online profile","Change the email on my Western Union profile","Change the phone # on my online profile","Update address on online profile","Update my name on my profile","Update privacy and marketing settings","How to edit my profile settings","How to update my Western Union profile","Phone and Address Information","Where to login to my account","I forgot my profile's email","I forgot my User ID, password, or entered incorrect details","Password link does not work","There is already an account with my email address - Error C1052","My profile is not displaying my recent transfer","How many times can I register online","Complete online account verification","Use login from westernunion.com on Western Union app","Use westernunion.com profile on mobile app","My account has been compromised","Can I delete my account","Cost to register for online services","Do I need a profile to send money","Profile edit","How do I register with Western Union?","How do I log into my Western Union profile?","Why should I register with Western Union?","Does my receiver need to register?","How do I change my password?","How do I add my debit card, credit card or a bank account?","Does it cost anything to register with Western Union?","How do I edit my profile?","Can I change my password?","How do I set up a security question?","How do I update my email address in my profile?","How do I update my postal address and phone number?","How do I change my profile privacy and marketing settings?","How do I delete my profile?","Can I add or delete a receiver from my profile?","Access my money transfer history"],
+    "Sending Money": ["How do I send money","How do I send money with Western Union?","How can I send money with Western Union?","Send money online with Western Union","Send money from a mobile phone/tablet","Send money from an agent location","Send money to a bank account","Send money to a business account","Send money with a bank account","Send money with Western Union","Send with mobile app","Send for the first time","Send from the website","Send anytime at an agent location","Send a money transfer on a holiday","How much can I send","How old do I have to be","Documentation required to transfer money","Pay for a money transfer","Pay in cash if I use the app to send money","How do I pay for my transfers?","How do I pay with Apple Pay?","How do I pay using Google Pay?","How can I pay for my money transfer?","Transfer money using a mobile phone or tablet","Sending Money","Can I change currency","Send or receive in Cuba","How to cancel transfer?","How much does it cost to send a transfer","Will my credit card charge a fee for sending money?","Can I send money to a mobile wallet?","What do I need to send an online money transfer from Australia?","How do I pay with ApplePay?","How do I know if my transfer has been approved?","Do I need to register to send money?","Can I pay in cash even if I use the app to send money?","How can I send money with Western Union using Beforepay?","Do I need to sign up with Beforepay to use their service?","How much can I borrow with Beforepay?","How do I know if I am eligible for a cash advance from Beforepay?","How do I make repayments with Beforepay?","How do I contact Beforepay?","How do I send money to a bank account from Australia?","What details do I need to send money directly to a bank account?","How do I send money to India with UPI?","How many Alipay wallet transfers can I make in a month?","What is Verified by Visa® and MasterCard SecureCode®?","How much money can I send online from Australia?","How much money can I send from an agent location in Australia?","Can I send money directly to a bank account?","Add a test question","How can I send money with Western Union?","Cancel/Refund Transfer","Report a problem"],
+    "Transfer Status": ["Check transfer status","Find the Money Transfer Control Number (MTCN)","What is a Money Transfer Control Number (MTCN)","What is a transfer number","Forgot my MTCN because I lost the receipt","Get a copy of my transfer receipt","Can I see my receipt online","Was my money transfer received","Has my online transfer been approved","Why is my money transfer delayed","Why is my money transfer on hold","My transfer was never put on hold before, why now?","How long will my transfer be on hold for?","What does \"in progress\" mean?","How to complete your transfer?","Why do I need to upload additional documents?","Transfer status and service notifications","When did I send a transfer","How can I check my transfer status?","How will I know if my transfer is complete?","Who can check the status of a money transfer?","Can I access my money transfer history?","Can I repeat a past transfer?","Can I change my receiver's name on a money transfer?","If I sent money to a bank account, how can I check my transfer status?","When I send a money transfer, will my receiver get a notification?","I have already funded the transfer but it's still in Progress, why","How do I report an issue on the website or the app?"],
+    "Receiving Money": ["Can my receiver pick up at any Western Union location","Can somebody else pick up my transfer","Receive money using my bank account","Receiver notification for money to bank account","Receiver notification when money is ready for pick up","What does the receiver need to collect the money?","Does the receiver need to do anything?","Will I get notified once the money arrives?","How much does it cost to receive money","Is there a fee to receive money","How long until my transfer is delivered?","Can the receiver collect the funds in cash?","Receiver is unable to leave home","Does Western Union have home delivery","Change the payout location of a transfer","When can I get the money","Receiving money","When can my receiver have the money?","How can my receiver get the money?","When was it picked up?","Where was it picked up?","Can a picked up transfer be canceled?","Why is there a delivery timeframe?","Does the delivery timeframe vary for each transfer?","How long will the transfer be available for?","Why can the transfer not be found?","Where to check the money transfer records?","Is there another way for me to search for the money transfer?","Why were the details provided insufficient?","Can I search for the Transfer differently","Can the money be made available quicker?","Why was my payout method changed?"],
+    "Refunds & Cancellations": ["Cancel my money transfer and get a refund","Cancel/Refund","Can I cancel my money transfer? When will I receive a refund?","Can I cancel my transfer and get a refund?","Refund into my bank account","How long does a refund take for an agent transfer?","How long does it take for an online transfer to be refunded? (westernunion.com/App)","Why was my transfer canceled?","Can I send a new money transfer?","Did I do anything wrong?","Why do I need to get a new MTCN for the refund?","Where will the refund go?","Why does a refund take this long?","Why was money deducted from my account?","Transfer was declined","Reimbursement after starting a forgery claim","Fee for processing a forgery claim","When can I start a forgery claim","How long does a refund take for an agent transfer?","Is there anything I can do during the review process?","What can be done to make it faster?","Pending verification from sender, how long will my Transfer be on hold?","How long does it take for an online transfer to be refunded? (westernunion.com/App)"],
+    "Fraud & Security": ["I suspect fraud or I am a victim of fraud","Help protect myself from fraud","How to determine fraud","How to report fraud","Common fraud scenarios to be aware of","Common scams","Email asking for my personal information","Got email asking for personal info","I received a call from 1-800-773-7948","My account has been compromised","Did not request to reset password","Customer Complaint","What can I do to help protect myself from fraud?"],
+    "KYC & Identity": ["Why should I speak to KYC","Know Your Customer","What do you mean by kyc","What is kyc","I received an Email from KYC","Is KYC a Western Union function","Does Western Union need to confirm my identity","How can I verify my ID","Verify my bank account","What identification is accepted","Why verify my identity to send online","Western Union's profile verification process","What kind of verification is required?","What happens if the sender doesn't call?","What does Western Union do with personal information","Why do I need to verify my identity when sending money online?","How can I verify my identity at an agent's location?","Why do I need to add details even after a successful identity verification?","Why do I need to update my details again?","How can I verify my identity online?","ID requirements","Why am I unable to use Western Union services after receiving the message \"Additional info needed, go to westernunion.com/gcr\"?","How can I use Western Union services again?","Why do I need to provide additional information?","What documents are suitable and why does Western Union need them?","What happens after I provided the additional information?","Are my documents safe?","What is the limit of the amount that I can transfer through Western Union?"],
+    "Fees & Rates": ["Fees to send money","Foreign exchange rates to send money","What exchange rate is Western Union is offering","What are the foreign exchange rates for sending money?","What are the foreign exchange rates* for sending money?","What about exchange rates and transfer fees?","Check rates","Cash advance fee when using Western Union services","Is there a fee to receive money","How much does it cost to receive money","Find my receiver's bank code","What is a bank code? How do I find my receiver's bank code?","What is a Bank Identification Code (BIC)?","What is an International Bank Account Number (IBAN)?"],
+    "Rewards": ["Check my reward points","Earn My WU Rewards points","Get a My WU membership","How do I get rewards","My WU profile not earning points","What can I redeem with points","What is MyWU loyalty program?","What is the My WU Program","What is the My WU℠ loyalty program?","What are the benefits of My WU℠ loyalty program?","How do I sign up for the My WU℠ rewards program?","How can I earn My WU℠ points?","How do I check my accrued My WU℠ reward points?","How do I redeem My WU℠ points?","Can I merge two My WU℠ numbers?","I'm a Gold Card holder. Is My WU℠ different?","Why can I not earn points in the My WU℠ loyalty program anymore?","Can I still redeem My WU℠ points?"],
+    "Locations": ["Find a Western Union location","Find an agent location","Cannot find a Western Union Agent near me","Agent location is closed","Agent location services","Agent hours","What is a Western Union Agent location","Which transfer service is offered at Western Union agent locations","Enough cash at agent locations","How to send money from an agent location","How to become a Western Union Agent","Benefits of becoming a Western Union Agent","How do I become a Western Union Agent?","What are Western Union agent locations?","How do I find out the services being offered at an Agent Location?","What are the working hours of agent locations?","How do I find a Western Union agent location?"],
+    "Large Transfers": ["Are there any additional checks to sending multiple large amount money transfers in a short period of time?","How to send a large amount money transfer, and do I need to provide any additional documents?","What are the fees to send a large amount money transfer?","When is the money taken from my bank account?","Does it take longer to complete a large amount money transfer?","How secure is my large amount money transfer?","Do I need to complete an identity verification process to send a large amount money transfer? What are the acceptable verification documents?","Why do I have to send my source of funds documentation?","Where do I need to send the additional documents?","What care do I need to take when sending the documents?","How many documents do I need to provide to validate the source of my funds?","What happens if some of my documents are not accepted?","Is my information secure?","Who can I contact about my large amount money transfer?","When will I receive a call/an email from Western Union?","What if I missed the call from Western Union?","Do I need to get my documents translated?","How long does it take to verify my documents?","What are the reasons my large amount money transfer is declined?"],
+    "Error Codes": ["C1052 There's already an account with this email address. If it's your account, please log in with your username or email address","C1052","C2201 This transfer exceeds the limit. Please retry with a smaller amount","C2201","C8082 PPS Customer is Not Allowed Via NON-PPS Channel","C8082","C9999 We're sorry, but there's been a technical problem. Please try again later","C9999","C5344 This transfer exceeds your money transfer limit. Please contact Western Union Customer Care for more details. (C5344) [R8749]","C5344","C9166 Error You entered an account number that is too short. Please verify it and try again","C9166","C1997 Your transaction couldn't be completed. Your bank declined your money transfer. If you have questions, please call the number on the back of your card. We're sorry for the inconvenience; you can always send cash at a Western Union Agent location","C1997","C8189 Unable to use this funding source. Please select previously used funding source","C8189","C1147 TRANSACTION NOT ALLOWED BY WESTERNUNION","C1147","R4064 TRANSACTION NOT ALLOWED BY WESTERNUNION","R4064","C2008 We're sorry, we can't complete any of your transfer requests. Please send an email to GCR@westernunion.com with your full name and tracking number (MTCN), if available, for instructions on what to do next to be able to use our services","C2008","C5000 To protect your security, your session has timed out. Please try again","C5000","C8618 Web: We're sorry, but your transfer has been declined for regulatory reasons. If you have any questions, please call Customer Care at (xxx) xxx-xxxx. Mobile: Your transfer was declined for regulatory reasons. For help, call Customer Care at (xxx) xxx-xxxx","C8618","C1463 Please check the biller account number","C1463","C1438 There's a problem with this phone number. Please check and re-enter it","C1438","C1992 We're sorry, but we can't process this transaction. You can always send cash at a Western Union Agent location","C1992","Error code C6325","C6325","C9203 There is a technical problem. Please try again later","C9203","Error code review.paymentMismatchNotification_1","review.paymentMismatchNotification_1","Error code P1011","P1011","C5123 We're sorry, but there's been a technical problem. Please try again later","C5123","C5149 INVALID SENDER DETAILS / OR EXPECTED PAYOUT AMOUNT - RECEIVER SEARCH","C5149","C1620 We could not find any records that match the information you provided. Please try again","C1620","C1351 Please check and re-enter your Gold Card/My WU number","C1351","C5103 We're sorry, but there's been a technical problem. Please try again later","C5103","C1898 There's a problem with this birthdate. Please check and re-enter it","C1898","Error code C5145","C5145","C1321 Receiver's bank branch number is incorrect. Please verify it and try again","C1321","C8161 Oops! Something went wrong! There is a technical problem. Please try again later","C8161","C6007 We can't find that Gold Card or My WU account number in our records. Please check and re-enter it","C6007","C5284 There is a technical problem. Please try again later","C5284","C2045 You've reached your monthly receive limit. Please try again later","C2045","C7788 THERE IS A TECHNICAL PROBLEM PLEASE TRY AGAIN LATER","C7788","R1014 TXN ON HOLD; BEING REVIEWED BY Western Union","R1014","R9860 TXN MUST BE SENT FROM A RETAIL LOCATION","R9860","C1142 You'll need to complete this transfer on the website you registered with. We are redirecting you now","C1142","R1140 TRANSACTION NOT ALLOWED","R1140","C2013 There seems to be a mismatch with the address associated with this card. Please re-enter your security code and check your billing address, or try a different payment method","C2013","R7005 DOCUMENTS NEEDED","R7005","C1133 For your security reasons, we need your birth date","C1133","C1786 Please check and re-enter the inmate number","C1786","C1309 There's a problem with this bank account information. Please check and re-enter it","C1309","C4138 Money transfer to a business is not available. Please make sure you send money to an individual","C4138","C1844 This mailing address can't be a P.O. box. Please enter another address","C1844","C2046 You've reached your monthly send limit with this receiver. Please try again next month","C2046","R1325 TRANSACTION REFUSED BY WESTERN UNION","R1325","C5859 Your ID has expired","C5859","C1462 Please check the inmate account number","C1462","C6319 Please check and re-enter your ID information","C6319","C1053 Please check and re-enter your ZIP code. Please check and re-enter your postcode","C1053","C6331 We are reviewing your profile and we will notify you when we are done. Money transfers are not allowed during a review","C6331","C1282 There is a problem with this credit card information. Please check and enter the card details again","C1282","C1131 Please check your email address or username and password and try logging in again. If you've forgotten your password, click \"Forgot your password?\"","C1131","C1775 Please check your receiver's bank information","C1775","C2103 Please re-enter your last name, using only letters, spaces, and hyphens","C2103","R4108 ID REVIEW IN PROGRESS. PLEASE WAIT 1 HOUR","R4108","C1411 There's a problem with the receiver's state","C1411","C1106 Please enter the security code","C1106","R8005 TRANSACTION CANNOT BE COMPLETED","R8005","R8145 EXCEEDS TRANSACTION MAXIMUM LIMIT","R8145","C1783 We're sorry, we cannot process this transfer with your selected payout option. Please try again later, or choose another way your receiver gets our money (C1783)","C1783","C9175 The currency selected does not match the currency of the account","C9175","C2010","C2016","We are sorry, but your bank declined this transfer. It's possible that your amount is larger than what's available in your account or what bank allows.","Your bank declined the transfer either due to insufficient funds or the transfer amount exceeds bank transfer limit. Please try again with a smaller amount.","We're sorry, but your bank declined this transfer. Please call the number on the back of your card. Ask the bank to approve your transfer. Send again.","We're sorry, but your bank declined this transfer, please choose from the following: Call your bank and try again, Change card"],
+    "Bot & General": ["Are you a bot","Do I have to chat with a bot","Do I have to call from my registered phone number","How can you help me","What is Western Union's contact info","Western Union Online Terms & Conditions","Western Union Privacy Statement","Problems using the Western Union website","Website is displaying an error","Does Western Union collect donations","Who uses Western Union money transfer services","Where is Western Union's annual report","Where to find info for shareholders","Yes! I have a Western Union online account or Mobile app","No! I do not have a Western Union online account or Mobile app","Privacy","Usage Assistance","Password Assistance","About Us","Question"],
+  };
+
+  // Canonical list of all 446 prompts (source of truth for "All" tab)
+  const allPrompts = ["About Us","Accepted credit cards","Access my money transfer history","Add a receiver in my online profile","Add a receiver to my profile","Add a test question","Add or delete a credit/debit card or bank account","Agent hours","Agent location is closed","Agent location services","Are you a bot","Bank account info is incorrect","Benefits of becoming a Western Union Agent","Can I change currency","Can I delete my account","Can I see my receipt online","Can my receiver pick up at any Western Union location","Can somebody else pick up my transfer","Cancel my money transfer and get a refund","Cannot find a Western Union Agent near me","Cash advance fee when using Western Union services","Change the email on my Western Union profile","Change the payout location of a transfer","Check my reward points","Check transfer status","Common fraud scenarios to be aware of","Common scams","Complete online account verification","Cost to register for online services","Create and register a Western Union profile","Delete a receiver from my online profile","Did not request to reset password","Do I have to call from my registered phone number","Do I have to chat with a bot","Do I need a profile to send money","Documentation required to transfer money","Does Western Union collect donations","Does Western Union have home delivery","Does Western Union need to confirm my identity","Earn My WU Rewards points","Email asking for my personal information","Enough cash at agent locations","Fee for processing a forgery claim","Fees to send money","Find a Western Union location","Find an agent location","Find my receiver's bank code","Find the Money Transfer Control Number (MTCN)","Foreign exchange rates to send money","Forgot my MTCN because I lost the receipt","Get a copy of my transfer receipt","Get a My WU membership","Got email asking for personal info","Has my online transfer been approved","Help protect myself from fraud","How can I verify my ID","How do I get rewards","How do I send money","How many times can I register online","How much can I send","How much does it cost to receive money","How old do I have to be","How to become a Western Union Agent","How to determine fraud","How to edit my profile settings","How to register online using the Western Union app","How to report fraud","How to send money from an agent location","How to use a promo code","I forgot my profile's email","I forgot my User ID, password, or entered incorrect details","I received a call from 1-800-773-7948","Why should I speak to KYC","Know Your Customer","What do you mean by kyc","I received an Email from KYC","Is KYC a Western Union function","I suspect fraud or I am a victim of fraud","I want to change my country code","ID code to complete my money transfer","Is there a fee to receive money","My account has been compromised","My profile is not displaying my recent transfer","My WU profile not earning points","Password link does not work","Pay for a money transfer","Pay in cash if I use the app to send money","Problems using the Western Union website","Receive money using my bank account","Receiver notification for money to bank account","Receiver notification when money is ready for pick up","Refund into my bank account","Reimbursement after starting a forgery claim","Resolving notification issues","Send a money transfer on a holiday","Send anytime at an agent location","Send for the first time","Send from the website","Send money from a mobile phone/tablet","Send money from an agent location","Send money online with Western Union","Send money to a bank account","Send money to a business account","Send money with a bank account","Send money with Western Union","Send with mobile app","The phone number on the transaction is incorrect","There is already an account with my email address - Error C1052","Transfer money using a mobile phone or tablet","Transfer status and service notifications","Transfer was declined","Unable to send money with mobile app","Update address on online profile","Update my name on my profile","Update privacy and marketing settings","Use login from westernunion.com on Western Union app","Use westernunion.com profile on mobile app","Verify my bank account","Was my money transfer received","Website is displaying an error","Western Union Online Terms & Conditions","Western Union Privacy Statement","What can I redeem with points","What does Western Union do with personal information","What exchange rate is Western Union is offering","What identification is accepted","What is a Money Transfer Control Number (MTCN)","What is a transfer number","What is a Western Union Agent location","What is MyWU loyalty program?","What is the My WU Program","What is Western Union's contact info","When can I get the money","When can I start a forgery claim","When did I send a transfer","Where is Western Union's annual report","Where to find info for shareholders","Which transfer service is offered at Western Union agent locations","Who uses Western Union money transfer services","Why is my money transfer delayed","Why is my money transfer on hold","Why verify my identity to send online","Western Union's profile verification process","Cancel/Refund","Sending Money","Check rates","Customer Complaint","Password Assistance","Profile edit","Privacy","Usage Assistance","Yes! I have a Western Union online account or Mobile app","No! I do not have a Western Union online account or Mobile app","When was it picked up?","Where was it picked up?","Can a picked up transfer be canceled?","What does \"in progress\" mean?","How to complete your transfer?","Why do I need to upload additional documents?","Why is my transfer on hold?","My transfer was never put on hold before, why now?","How long will my transfer be on hold for?","How long does a refund take for an agent transfer?","Why was my transfer canceled?","Can I send a new money transfer?","Did I do anything wrong?","Why do I need to get a new MTCN for the refund?","Where will the refund go?","Why does a refund take this long?","Why was money deducted from my account?","What kind of verification is required?","What happens if the sender doesn't call?","How long until my transfer is delivered?","Can the receiver collect the funds in cash?","Does the receiver need to do anything?","Will I get notified once the money arrives?","Why is there a delivery timeframe?","Does the delivery timeframe vary for each transfer?","How long will the transfer be available for?","What does the receiver need to collect the money?","Why can the transfer not be found?","Where to check the money transfer records?","Is there another way for me to search for the money transfer?","Why were the details provided insufficient?","Pending verification from sender, how long will my Transfer be on hold?","How long does it take for an online transfer to be refunded? (westernunion.com/App)","Is there anything I can do during the review process?","What can be done to make it faster?","Why was my payout method changed?","Receiver is unable to leave home","How long will my transfer be available for?","Can the money be made available quicker?","C1052 There's already an account with this email address. If it's your account, please log in with your username or email address","C1052","C2201 This transfer exceeds the limit. Please retry with a smaller amount","C2201","C8082 PPS Customer is Not Allowed Via NON-PPS Channel","C8082","C9999 We're sorry, but there's been a technical problem. Please try again later","C9999","C5344 This transfer exceeds your money transfer limit. Please contact Western Union Customer Care for more details. (C5344) [R8749]","C5344","C9166 Error You entered an account number that is too short. Please verify it and try again","C9166","C1997 Your transaction couldn't be completed. Your bank declined your money transfer. If you have questions, please call the number on the back of your card. We're sorry for the inconvenience; you can always send cash at a Western Union Agent location","C1997","C8189 Unable to use this funding source. Please select previously used funding source","C8189","C1147 TRANSACTION NOT ALLOWED BY WESTERNUNION","C1147","R4064 TRANSACTION NOT ALLOWED BY WESTERNUNION","R4064","C2008 We're sorry, we can't complete any of your transfer requests. Please send an email to GCR@westernunion.com with your full name and tracking number (MTCN), if available, for instructions on what to do next to be able to use our services","C2008","C5000 To protect your security, your session has timed out. Please try again","C5000","C8618 Web: We're sorry, but your transfer has been declined for regulatory reasons. If you have any questions, please call Customer Care at (xxx) xxx-xxxx. Mobile: Your transfer was declined for regulatory reasons. For help, call Customer Care at (xxx) xxx-xxxx","C8618","C1463 Please check the biller account number","C1463","C1438 There's a problem with this phone number. Please check and re-enter it","C1438","C1992 We're sorry, but we can't process this transaction. You can always send cash at a Western Union Agent location","C1992","Error code C6325","C6325","C9203 There is a technical problem. Please try again later","C9203","Error code review.paymentMismatchNotification_1","review.paymentMismatchNotification_1","Error code P1011","P1011","C5123 We're sorry, but there's been a technical problem. Please try again later","C5123","C5149 INVALID SENDER DETAILS / OR EXPECTED PAYOUT AMOUNT - RECEIVER SEARCH","C5149","C1620 We could not find any records that match the information you provided. Please try again","C1620","C1351 Please check and re-enter your Gold Card/My WU number","C1351","C5103 We're sorry, but there's been a technical problem. Please try again later","C5103","C1898 There's a problem with this birthdate. Please check and re-enter it","C1898","Error code C5145","C5145","C1321 Receiver's bank branch number is incorrect. Please verify it and try again","C1321","C8161 Oops! Something went wrong! There is a technical problem. Please try again later","C8161","C6007 We can't find that Gold Card or My WU account number in our records. Please check and re-enter it","C6007","C5284 There is a technical problem. Please try again later","C5284","C2045 You've reached your monthly receive limit. Please try again later","C2045","C7788 THERE IS A TECHNICAL PROBLEM PLEASE TRY AGAIN LATER","C7788","R1014 TXN ON HOLD; BEING REVIEWED BY Western Union","R1014","R9860 TXN MUST BE SENT FROM A RETAIL LOCATION","R9860","C1142 You'll need to complete this transfer on the website you registered with. We are redirecting you now","C1142","R1140 TRANSACTION NOT ALLOWED","R1140","C2013 There seems to be a mismatch with the address associated with this card. Please re-enter your security code and check your billing address, or try a different payment method","C2013","R7005 DOCUMENTS NEEDED","R7005","C1133 For your security reasons, we need your birth date","C1133","C1786 Please check and re-enter the inmate number","C1786","C1309 There's a problem with this bank account information. Please check and re-enter it","C1309","C4138 Money transfer to a business is not available. Please make sure you send money to an individual","C4138","C1844 This mailing address can't be a P.O. box. Please enter another address","C1844","C2046 You've reached your monthly send limit with this receiver. Please try again next month","C2046","R1325 TRANSACTION REFUSED BY WESTERN UNION","R1325","C5859 Your ID has expired","C5859","C1462 Please check the inmate account number","C1462","C6319 Please check and re-enter your ID information","C6319","C1053 Please check and re-enter your ZIP code. Please check and re-enter your postcode","C1053","C6331 We are reviewing your profile and we will notify you when we are done. Money transfers are not allowed during a review","C6331","C1282 There is a problem with this credit card information. Please check and enter the card details again","C1282","C1131 Please check your email address or username and password and try logging in again. If you've forgotten your password, click \"Forgot your password?\"","C1131","C1775 Please check your receiver's bank information","C1775","C2103 Please re-enter your last name, using only letters, spaces, and hyphens","C2103","R4108 ID REVIEW IN PROGRESS. PLEASE WAIT 1 HOUR","R4108","C1411 There's a problem with the receiver's state","C1411","C1106 Please enter the security code","C1106","R8005 TRANSACTION CANNOT BE COMPLETED","R8005","R8145 EXCEEDS TRANSACTION MAXIMUM LIMIT","R8145","C1783 We're sorry, we cannot process this transfer with your selected payout option. Please try again later, or choose another way your receiver gets our money (C1783)","C1783","C9175 The currency selected does not match the currency of the account","C9175","C2010","C2016","We are sorry, but your bank declined this transfer. It's possible that your amount is larger than what's available in your account or what bank allows.","Your bank declined the transfer either due to insufficient funds or the transfer amount exceeds bank transfer limit. Please try again with a smaller amount.","We're sorry, but your bank declined this transfer. Please call the number on the back of your card. Ask the bank to approve your transfer. Send again.","We're sorry, but your bank declined this transfer, please choose from the following: Call your bank and try again ,Change card","Cancel/Refund Transfer","Report a problem","How do I pay for my transfers?","How do I pay with Apple Pay?","How can I send money with Western Union?","Can I cancel my money transfer? When will I receive a refund?","What is kyc","Receiving money","What are the foreign exchange rates for sending money?","Why am I unable to use Western Union services after receiving the message \"Additional info needed, go to westernunion.com/gcr\"?","How can I use Western Union services again?","Change the phone # on my online profile","Send or receive in Cuba","How to cancel transfer?","How much does it cost to send a transfer","How to update my Western Union profile","Phone and Address Information","Where to login to my account","ID requirements","Can I search for the Transfer differently","How do I pay using Google Pay?","How do I send money with Western Union?","How can I pay for my money transfer?","How much money can I send from an agent location in Australia?","What about exchange rates and transfer fees?","Will my credit card charge a fee for sending money?","Can I send money to a mobile wallet?","When can my receiver have the money?","How do I send money to India with UPI?","How many Alipay wallet transfers can I make in a month?","What is Verified by Visa® and MasterCard SecureCode®?","What do I need to send an online money transfer from Australia?","How do I pay with ApplePay?","How do I know if my transfer has been approved?","Do I need to register to send money?","What are the foreign exchange rates* for sending money?","Can I pay in cash even if I use the app to send money?","How can I send money with Western Union using Beforepay?","Do I need to sign up with Beforepay to use their service?","How much can I borrow with Beforepay?","How do I know if I am eligible for a cash advance from Beforepay?","How do I make repayments with Beforepay?","How do I contact Beforepay?","How do I send money to a bank account from Australia?","What details do I need to send money directly to a bank account?","What is a bank code? How do I find my receiver's bank code?","What is a Bank Identification Code (BIC)?","What is an International Bank Account Number (IBAN)?","Can I send money directly to a bank account?","Are there any additional checks to sending multiple large amount money transfers in a short period of time?","How to send a large amount money transfer, and do I need to provide any additional documents?","What are the fees to send a large amount money transfer?","When is the money taken from my bank account?","Does it take longer to complete a large amount money transfer?","How secure is my large amount money transfer?","Do I need to complete an identity verification process to send a large amount money transfer? What are the acceptable verification documents?","Why do I have to send my source of funds documentation?","Where do I need to send the additional documents?","What care do I need to take when sending the documents?","How many documents do I need to provide to validate the source of my funds?","What happens if some of my documents are not accepted?","Is my information secure?","Who can I contact about my large amount money transfer?","When will I receive a call/an email from Western Union?","What if I missed the call from Western Union?","Do I need to get my documents translated?","How long does it take to verify my documents?","What are the reasons my large amount money transfer is declined?","What does my receiver need to pick up the money transfer?","What are Western Union agent locations?","How do I find out the services being offered at an Agent Location?","What are the working hours of agent locations?","How do I find a Western Union agent location?","How can I check my transfer status?","How will I know if my transfer is complete?","Who can check the status of a money transfer?","Can I access my money transfer history?","Can I repeat a past transfer?","Can I change my receiver's name on a money transfer?","If I sent money to a bank account, how can I check my transfer status?","When I send a money transfer, will my receiver get a notification?","How do I report an issue on the website or the app?","How do I register with Western Union?","How do I log into my Western Union profile?","Why should I register with Western Union?","Does my receiver need to register?","How do I change my password?","How do I add my debit card, credit card1 or a bank account?","Does it cost anything to register with Western Union?","How do I edit my profile?","Can I change my password?","How do I set up a security question?","How do I update my email address in my profile?","How do I update my postal address and phone number?","How do I change my profile privacy and marketing settings?","How do I delete my profile?","Why do I need to verify my identity when sending money online?","How can I verify my identity at an agent's location?","Why do I need to add details even after a successful identity verification?","Why do I need to update my details again?","What is the My WU\u2120 loyalty program?","What are the benefits of My WU\u2120 loyalty program?","How do I sign up for the My WU\u2120 rewards program?","How can I earn My WU\u2120 points?","How do I check my accrued My WU\u2120 reward points?","How do I redeem My WU\u2120 points?","Can I merge two My WU\u2120 numbers?","I'm a Gold Card holder. Is My WU\u2120 different?","Why can I not earn points in the My WU\u2120 loyalty program anymore?","Can I still redeem My WU\u2120 points?","What can I do to help protect myself from fraud?","How do I become a Western Union Agent?","Why am I unable to use Western Union services after receiving the message \"Additional info needed, go to westernunion.com/gcr\"?","Why do I need to provide additional information?","What documents are suitable and why does Western Union need them?","What happens after I provided the additional information?","Are my documents safe?","Can I cancel my transfer and get a refund?","What is the limit of the amount that I can transfer through Western Union?","How can I verify my identity online?","How much money can I send online from Australia?","How can my receiver get the money?","Can I add or delete a receiver from my profile?","I have already funded the transfer but it's still in Progress, why"];
+
+  let activeTab = "All";
+
+  // Build tabs
+  const tabContainer = document.getElementById('category-tabs');
+  Object.keys(categories).forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (cat === 'All' ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = cat;
+      document.getElementById('search-input').value = '';
+      renderPrompts();
+    };
+    tabContainer.appendChild(btn);
+  });
+
+  function isErrorCode(text) {
+    return /^[CRP]\d{4}/i.test(text.trim()) || /^Error code /i.test(text.trim()) || /^review\./i.test(text.trim());
+  }
+
+  function renderPrompts(filter = '') {
+    const list = document.getElementById('prompt-list');
+    list.innerHTML = '';
+    const source = activeTab === 'All' ? allPrompts : (categories[activeTab] || []);
+    const filtered = filter
+      ? source.filter(p => p.toLowerCase().includes(filter.toLowerCase()))
+      : source;
+
+    document.getElementById('visible-count').textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="no-results">No prompts match your search.</div>';
+      return;
+    }
+
+    filtered.forEach(prompt => {
+      const item = document.createElement('div');
+      item.className = 'prompt-item';
+
+      const textEl = document.createElement('span');
+      textEl.className = 'prompt-text';
+
+      if (isErrorCode(prompt)) {
+        const codeMatch = prompt.match(/^([CRP]\d{4}|review\.[^\s]+|P\d{4})/i);
+        if (codeMatch) {
+          const tag = document.createElement('span');
+          tag.className = 'error-tag';
+          tag.textContent = codeMatch[1];
+          textEl.appendChild(tag);
+          textEl.appendChild(document.createTextNode(prompt.replace(codeMatch[0], '').trim() || codeMatch[1]));
+        } else {
+          textEl.textContent = prompt;
+        }
+      } else {
+        textEl.textContent = prompt;
+      }
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.textContent = 'Copy';
+      copyBtn.onclick = (e) => {
+        e.stopPropagation();
+        function fallbackCopy(text) {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        function markCopied() {
+          copyBtn.textContent = '✓ Copied';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy';
+            copyBtn.classList.remove('copied');
+          }, 1800);
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(prompt).then(markCopied).catch(() => {
+            fallbackCopy(prompt);
+            markCopied();
+          });
+        } else {
+          fallbackCopy(prompt);
+          markCopied();
+        }
+      };
+
+      item.appendChild(textEl);
+      item.appendChild(copyBtn);
+      list.appendChild(item);
+    });
+  }
+
+  function filterPrompts() {
+    const val = document.getElementById('search-input').value;
+    // When searching, switch to All tab
+    if (val) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.tab-btn').classList.add('active');
+      activeTab = 'All';
+    }
+    renderPrompts(val);
+  }
+
+  renderPrompts();
+</script>
 </body>
 </html>
